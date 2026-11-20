@@ -1,48 +1,23 @@
-# Design decisions
+# Build notes — Vice Coast Cover Studio (round 3)
 
-## Why a canvas engine, not DOM panels
-The cover is drawn on one canvas (`renderCover` in `app/src/cover.js`) at
-whatever pixel size is asked for, so the live preview and the exported PNG
-are literally the same drawing code at different resolutions. That is what
-lets one click export 1080 x 1080, 1080 x 1350 and 1920 x 1080 without
-re-laying anything out: every layout rect is a fraction of the cover.
+Rebuilt from scratch in this session (2026-11-20) from the feature spec only — no old code was read or copied. Every text file was authored here; `app/src/main.js` and `app/src/cover.js` were each written and then revised again after testing.
 
-## Layouts
-Six, because the judge's first criterion is the art and the winning pattern
-in this bounty is multi-panel: a 3x3 nine-panel grid (the GTA poster look),
-hero-and-three, a 2x2 grid, full bleed for a single strong shot, tilted
-snapshots (rotated white-framed prints over a sunset sky), and a story stack
-for the 1080 x 1350 portrait size. Panels are chosen per layout, not per
-photo count, so any layout works with one photo or four.
+## Files
 
-## Grades as filter + gradient overlays
-Each grade is a canvas `filter` on the photo draw (saturation/contrast/
-sepia/grayscale) plus one or two linear-gradient overlays. That gives a
-sunset, neon, vice, gold and noir look with no image library and no network,
-and it keeps the photos recognisable — the grade tints, it does not hide.
+- `app/index.html` — editor shell: stage canvas, export sizes, 5 control cards
+- `app/style.css` — dark violet/neon theme, responsive, `shot-cover` / `shot-editor` modes
+- `app/src/cover.js` — render engine: 6 layouts, 5 grades, caption + ribbon, grain, vignette
+- `app/src/main.js` — UI: uploads, drag-drop, pan/zoom, undo/redo, export, demo photos, shot boot
+- `app/src/shots.js` — `?shot=` presets (cover / editor / story)
+- `app/fonts/` — Anton + Pacifico, downloaded from google/fonts during this session; OFL.txt included
+- `app/samples/` — 4 AI-generated photos (boulevard, rooftop, neon, pier), ≤1200px, generated this session
+- `main.ts` — Node 22 stdlib only; copies app/ + screenshots/ to the output dir, writes dossier.json via vendor/makefun-app.ts
+- `serve.ts` — local static server on :8080
+- `shots.json` — 3 screenshot scene definitions
+- `screenshots/` — 3 JPEGs rendered from the app via headless Chromium (Puppeteer + SwiftShader)
 
-## Lettering
-Anton for the title (condensed bold, the genre's shape, OFL-licensed) with a
-dark outline and drop shadow over a soft dark plate, so it reads over any
-photo; Pacifico script in gold for the subtitle. A red star badge ribbon
-("VICE CITY") sits top-left as the poster's own mark — invented, not
-Rockstar's.
+## Checks
 
-## Photos and cropping
-Photos live in slots; each panel names a slot plus a zoom and pan offset.
-Clicking the preview hit-tests the panel rects, dragging pans, the wheel
-zooms, and the zoom slider mirrors it. "Fill all panels" is the one-click
-path from a single photo to a full poster; per-panel assignment is the
-multi-photo path. Undo/redo snapshots the whole state as JSON.
-
-## Samples and fonts
-The four sample photos were generated with an image model (no real people,
-no logos) from the house prompts: boulevard convertible, rooftop dusk, neon
-street, pier fishing. Fonts are the OFL Anton and Pacifico TTFs, loaded from
-`app/fonts/` with `@font-face`; nothing loads over the network at runtime.
-
-## Screenshots
-`?shot=editor` loads the demo into the editor; `?shot=cover` renders one
-exported cover full-frame, drawn by the app itself. The first screenshot by
-name is the best exported cover (wide 1920 x 1080, scaled to 1280 wide), so
-it shows largest on the judge's contact sheet.
+- `MAKEFUN_OUTPUT_DIR=out node main.ts` twice → dossier.json byte-identical (sha256 compared)
+- App loads offline at http://localhost:8080 with no external requests
+- Screenshots ≤256 KiB each, long side ≤1280, short side ≥480

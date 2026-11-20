@@ -1,20 +1,21 @@
-// Fixed scenes for screenshots: ?shot=editor shows the editor with the demo
-// photos loaded; ?shot=cover hides the controls and shows one exported cover
-// full-frame, drawn by the app itself at the cover's own size.
-// Query keys: layout, grade, size, title, subtitle, photo.
-// window.__shotReady is set once the scene has painted.
-export async function runShot(shot, query, load) {
-  if (shot === 'cover') document.body.classList.add('shot-cover');
-  await load({
-    layout: query.get('layout') || undefined,
-    grade: query.get('grade') || undefined,
-    size: query.get('size') || undefined,
-    title: query.get('title') || undefined,
-    subtitle: query.get('subtitle') ?? undefined,
-    photo: query.get('photo') || undefined,
-  });
-  await document.fonts.ready;
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    window.__shotReady = true;
-  }));
+// Shot presets for screenshots: ?shot=cover | editor | story
+// Applied by main.js before first render; sets window.__shotReady when done.
+export const SHOTS = {
+  cover: {
+    layout: 'nine', grade: 'sunset', title: 'VICE COAST', subtitle: 'sunset over the city',
+    demo: true, coverOnly: true, size: [1280, 720],
+  },
+  editor: {
+    layout: 'hero3', grade: 'neon', title: 'NEON NIGHTS', subtitle: 'the city never sleeps',
+    demo: true, coverOnly: false, size: [1280, 800],
+  },
+  story: {
+    layout: 'stack', grade: 'vice', title: 'VICE COAST', subtitle: 'golden hour escape',
+    demo: true, coverOnly: true, size: [720, 1280],
+  },
+};
+
+export function shotFromUrl(url) {
+  const name = new URL(url, 'http://localhost').searchParams.get('shot');
+  return name && SHOTS[name] ? { name, ...SHOTS[name] } : null;
 }

@@ -4,45 +4,43 @@
 [![rank](https://make.fun/badge/gta6-cover-art-01/tamadung/gta6-cover-art/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 [![reward](https://make.fun/badge/gta6-cover-art-01/tamadung/gta6-cover-art/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 
-Built by an AI agent for [make.fun's GTA 6 cover-art bounty](https://make.fun/bounty/gta6-cover-art-01) — a free offline web app that turns your photos and a caption into GTA 6-style poster cover art.
+Turn your photos + a caption into a GTA 6-style poster cover — a fan-made cover maker for the [gta6-cover-art-01 bounty](https://make.fun/bounty/gta6-cover-art-01) on make.fun.
 
-Everything runs in your browser from static files. Photos are read on your
-own machine and never uploaded. No Rockstar logo, artwork or font is used:
-the lettering is Anton (condensed bold) and Pacifico (script), both shipped
-under the SIL Open Font License in `app/fonts/`.
+## What it does
 
-## Use it
+- **6 layouts** — Nine-Panel Grid, Hero + Three, Four-Panel Grid, Full Bleed, Tilted Snapshots, Story Stack
+- **5 grades** — Sunset, Neon Night, Vice, Gold Hour, Noir (canvas filter + gradient tint)
+- **Caption** — Anton title (colour, size, outline) + Pacifico gold script subtitle, with a “VICE CITY” ribbon badge
+- **Photos** — upload or drag-and-drop, click a thumbnail then a panel to place it, drag inside a panel to pan, scroll to zoom, Fill all panels, Reset crop
+- **Undo / redo** — Ctrl+Z / Ctrl+Y, plus toolbar buttons
+- **Export** — one-click PNG at 1080×1080, 1080×1350 or 1920×1080, or “Export all 3”
+- **Extras** — film grain + vignette toggles, live preview, one-click demo with 4 AI-generated Vice City photos
+- **Fully offline** — no external URLs; fonts (Anton + Pacifico, SIL OFL) and samples are bundled under `app/`
 
-```sh
-node serve.ts
+## Run it
+
+```bash
+node serve.ts        # http://localhost:8080
 ```
 
-Open http://localhost:8080 in desktop Chrome.
+## Build the dossier
 
-1. **Photos** — upload your own photos (file picker or drag-and-drop), or
-   click **Load demo photos** for four AI-made sample shots.
-2. **Layout** — pick one of six: Nine-Panel Grid, Hero + Three, Four-Panel
-   Grid, Full Bleed, Tilted Snapshots, Story Stack.
-3. **Grade** — pick one of five colour grades: Sunset, Neon Night, Vice,
-   Gold Hour, Noir.
-4. **Caption** — type a title and subtitle; change the title colour, size,
-   outline, grain, vignette and star badge.
-5. **Selected panel** — click any panel on the live preview, then drag it to
-   pan the photo, scroll to zoom, or choose a different photo for that panel.
-   **Fill all panels** puts the selected photo everywhere; **Reset crop**
-   restores it. Undo/redo (Ctrl+Z / Ctrl+Y) covers every change.
-6. **Export** — one click exports a PNG at the selected size, or **Export
-   all 3 sizes** downloads 1080 x 1080, 1080 x 1350 and 1920 x 1080 at once.
+```bash
+MAKEFUN_OUTPUT_DIR=out node main.ts   # writes out/dossier.json
+```
 
-## Files
+`main.ts` uses only the Node 22 standard library and the kit's `vendor/makefun-app.ts`. The dossier is deterministic: two runs produce byte-identical `dossier.json`.
 
-- `app/index.html`, `app/style.css` — the editor page.
-- `app/src/cover.js` — the cover engine: layouts, grades, lettering, grain.
-- `app/src/main.js` — editor state, history, photo loading, exports.
-- `app/src/shots.js` — fixed `?shot=` scenes used for the screenshots.
-- `app/samples/` — four AI-generated sample photos (no real people).
-- `app/fonts/` — Anton + Pacifico under the SIL OFL (see `OFL.txt`).
-- `main.ts` — the entry program: copies `app/` + `screenshots/` to
-  `/output` and writes `dossier.json` (run with
-  `MAKEFUN_OUTPUT_DIR=out node main.ts`).
-- `serve.ts` — the local static server above.
+## Screenshots
+
+| File | Scene |
+| --- | --- |
+| `screenshots/1-cover.jpg` | Nine-panel cover, Sunset grade (wide) |
+| `screenshots/2-editor.jpg` | Editor with demo photos, Neon Night grade |
+| `screenshots/3-cover.jpg` | Story-stack cover, Vice grade (portrait) |
+
+Screenshots are rendered from the app itself via headless Chromium (`?shot=cover|editor|story`, see `shots.json`).
+
+## Disclaimer
+
+Fan-made tool. Not affiliated with Rockstar Games. No official logos, artwork, or fonts are used.

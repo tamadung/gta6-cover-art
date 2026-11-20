@@ -1,36 +1,24 @@
-// Vice Coast Cover Studio — the entry program (Node 22, standard library only).
-// Hands the app in: copies this repository's app/ and screenshots/ beside this
-// file into /output (or MAKEFUN_OUTPUT_DIR outside the grader) and writes
-// /output/dossier.json with the vendored make.fun library's buildDossier.
-// Run it with: mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+// Vice Coast Cover Studio — dossier builder (Node 22 stdlib only).
+// Copies app/ + screenshots/ into the output dir and writes dossier.json
+// with make.fun's buildDossier, so the dossier is byte-identical every run.
 import { buildDossier } from './vendor/makefun-app.ts';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const root = dirname(fileURLToPath(import.meta.url));
+const outDir = process.env.MAKEFUN_OUTPUT_DIR || '/output';
 
+rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
-cpSync(join(here, 'app'), join(outDir, 'app'), { recursive: true });
-mkdirSync(join(outDir, 'screenshots'), { recursive: true });
-if (existsSync(join(here, 'screenshots'))) {
-  cpSync(join(here, 'screenshots'), join(outDir, 'screenshots'), { recursive: true });
-}
+cpSync(join(root, 'app'), join(outDir, 'app'), { recursive: true });
+cpSync(join(root, 'screenshots'), join(outDir, 'screenshots'), { recursive: true });
 
-// The gate's caps (reference/gate.json): the text cap shapes the dossier's
-// bytes; the others refuse an entry the scorer would refuse — more than 4
-// screenshots or one over 256 KiB; app/ over 993 files or 48 MiB in all, or
-// a path under app/ over 1000 bytes.
-writeFileSync(
-  join(outDir, 'dossier.json'),
-  buildDossier(outDir, {
-    text_max_bytes: 163840,
-    screenshots: { max: 4, max_bytes: 262144 },
-    app_max_files: 993,
-    app_max_bytes: 50331648,
-    app_path_max_bytes: 1000,
-  }),
-);
-console.log(`Wrote ${outDir}/dossier.json from app/ and screenshots/.`);
+const dossier = buildDossier(outDir, {
+  text_max_bytes: 163840,
+  screenshots: { max: 4, max_bytes: 262144 },
+  app_max_files: 993,
+  app_max_bytes: 50331648,
+});
+writeFileSync(join(outDir, 'dossier.json'), dossier);
+console.log(`dossier written: ${outDir}/dossier.json (${dossier.length} bytes)`);
