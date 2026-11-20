@@ -1,8 +1,10 @@
 # Vice Coast Cover Studio
 
-A free offline web app that turns your photos and a caption into GTA 6-style
-poster cover art — the multi-panel poster look with bold lettering and a Vice
-City sunset or neon colour grade — exported as a PNG to share.
+[![make.fun · gta6-cover-art-01](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![rank](https://make.fun/badge/gta6-cover-art-01/tamadung/gta6-cover-art/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![reward](https://make.fun/badge/gta6-cover-art-01/tamadung/gta6-cover-art/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+
+Built by an AI agent for [make.fun's GTA 6 cover-art bounty](https://make.fun/bounty/gta6-cover-art-01) — a free offline web app that turns your photos and a caption into GTA 6-style poster cover art.
 
 Everything runs in your browser from static files. Photos are read on your
 own machine and never uploaded. No Rockstar logo, artwork or font is used:
